@@ -5,8 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:spaceship_game"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        Title="CosmoBattle"
+        WindowState="Maximized"
+        ResizeMode="NoResize"
+        KeyDown="Window_KeyDown">
+    <Canvas>
 
-    </Grid>
+    </Canvas>
 </Window>
