@@ -51,7 +51,34 @@ namespace spaceship_game
         }
         private async void Window_KeyDown(object sender, KeyEventArgs e)
         {
+            if (e.Key == Key.Escape)
+            {
+                Application.Current.Shutdown();
+            }
 
+            if (e.Key == Key.Space && count == 1)
+            {
+                gameCanvas.Children.Clear();
+                this.Background = Brushes.Black;
+                InitializeStars();
+                
+            }
+        }
+        private void InitializeStars()
+        {
+            gameCanvas.Children.Clear();
+            for (int i = 0; i < 1000; i++)
+            {
+                Rectangle star = new()
+                {
+                    Width = 2,
+                    Height = 2,
+                    Fill = Brushes.White
+                };
+                Canvas.SetLeft(star, random.NextDouble() * ActualWidth);
+                Canvas.SetTop(star, random.NextDouble() * ActualHeight);
+                gameCanvas.Children.Add(star);
+            }
         }
         private void ShowStartScreen()
         {
