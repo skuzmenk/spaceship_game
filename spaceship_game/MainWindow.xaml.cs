@@ -82,6 +82,74 @@ namespace spaceship_game
                 count = 0;
                 score = 0;
                 SetupUI();
+                await PlayGameRounds();
+            }
+        }
+        private async Task PlayGameRounds()
+        {
+            while (true)
+            {
+                await PlayRound(new SmallAsteroid(), 10);
+                if (isGameOver)
+                {
+                    break;
+                }
+                await PlayRound(new BigAsteroid(), 10);
+                if (isGameOver)
+                {
+                    break;
+                }
+                bossRound.Play();
+                await PlayRound(new UFO(), 1);
+                if (isGameOver)
+                {
+                    break;
+                }
+                speed += 30;
+            }
+        }
+        public void OnEnemyHit()
+        {
+            shoot.Play();
+            speed--;
+        }
+        private async Task PlayRound(Enemy enemyType, int count)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                Enemy enemy = enemyType.Clone();
+                enemy.ParentWindow = this;
+                enemy.Initialize(random.NextDouble() * (ActualWidth - 200), random.NextDouble() * (ActualHeight - 400));
+                gameCanvas.Children.Add(enemy.Image);
+                health = enemy.Health;
+
+                var movable = enemy as IMovable;
+
+                while (enemy.Size < 160)
+                {
+                    movable?.Move();
+                    await Task.Delay(speed);
+
+                    if (enemy.IsDestroyed)
+                    {
+                        gameCanvas.Children.Remove(enemy.Image);
+                        player.Play();
+                        score += enemy.Score;
+                        scoreLabel.Content = $"Score: {score}";
+                        break;
+                    }
+                }
+
+                if (enemy.Size >= 160)
+                {
+                    gameCanvas.Children.Remove(enemy.Image);
+                    LoseLife();
+                }
+                if (isGameOver)
+                {
+                    GameOver();
+                    break;
+                }
             }
         }
         private void SetupUI()
@@ -191,6 +259,46 @@ namespace spaceship_game
         public static BitmapImage LoadImage(string path)
         {
             return new BitmapImage(new Uri(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, path)));
+        }
+        public interface IMovable
+        {
+            void Move();
+        }
+        public abstract class Enemy
+        {
+            public Image Image { get; protected set; }
+            public int Health { get; protected set; }
+            public int Score { get; protected set; }
+            public double X { get; protected set; }
+            public double Y { get; protected set; }
+            public int Size { get; set; }
+            public MainWindow ParentWindow { get; set; }
+
+            public bool IsDestroyed => Health <= 0;
+
+            public abstract Enemy Clone();
+
+            public virtual void Initialize(double x, double y)
+            {
+                X = x;
+                Y = y;
+                Size = 60;
+                Image.MouseDown += Enemy_Click;
+                Canvas.SetLeft(Image, X);
+                Canvas.SetTop(Image, Y);
+            }
+
+            private void Enemy_Click(object sender, MouseButtonEventArgs e)
+            {
+
+                if (Health > 0)
+                {
+                    Health--;
+                    ParentWindow?.OnEnemyHit();
+                }
+            }
+
+
         }
     }
 }
