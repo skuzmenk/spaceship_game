@@ -79,8 +79,64 @@ namespace spaceship_game
                 gameCanvas.Children.Clear();
                 this.Background = Brushes.Black;
                 InitializeStars();
-                //////////////////////////////////////////
+                count = 0;
+                score = 0;
+                SetupUI();
             }
+        }
+        private void SetupUI()
+        {
+            this.Content = gameCanvas;
+            gameCanvas.Children.Clear();
+            InitializeStars();
+            scoreLabel = new Label
+            {
+                Foreground = Brushes.Yellow,
+                FontSize = 24,
+                Content = "Score: 0"
+            };
+            heart1 = new Image
+            {
+                Source = LoadImage("Resources/heart.png"),
+                Width = 25,
+                Height = 25
+            };
+            heart2 = new Image
+            {
+                Source = LoadImage("Resources/heart.png"),
+                Width = 25,
+                Height = 25
+            };
+            heart3 = new Image
+            {
+                Source = LoadImage("Resources/heart.png"),
+                Width = 25,
+                Height = 25
+            };
+
+            ship = new Image
+            {
+                Source = LoadImage("Resources/Ship.png"),
+                Width = ActualWidth,
+                Height = 250
+            };
+
+            Canvas.SetLeft(scoreLabel, ActualWidth - 150);
+            Canvas.SetTop(scoreLabel, 20);
+
+            Canvas.SetLeft(ship, 0);
+            Canvas.SetTop(ship, ActualHeight - ship.Height);
+            Canvas.SetLeft(heart1, 10);
+            Canvas.SetTop(heart1, 10);
+            Canvas.SetLeft(heart2, 30);
+            Canvas.SetTop(heart2, 10);
+            Canvas.SetLeft(heart3, 50);
+            Canvas.SetTop(heart3, 10);
+            gameCanvas.Children.Add(scoreLabel);
+            gameCanvas.Children.Add(ship);
+            gameCanvas.Children.Add(heart1);
+            gameCanvas.Children.Add(heart2);
+            gameCanvas.Children.Add(heart3);
         }
         private void InitializeStars()
         {
