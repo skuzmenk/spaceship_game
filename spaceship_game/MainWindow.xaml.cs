@@ -152,6 +152,63 @@ namespace spaceship_game
                 }
             }
         }
+        private void LoseLife()
+        {
+            lives--;
+            if (lives == 0)
+            {
+                isGameOver = true;
+                this.Background = Brushes.Red;
+                GameOver();
+                return;
+            }
+            switch (lives)
+            {
+
+                case 2:
+                    gameCanvas.Children.Remove(heart3);
+                    break;
+                case 1:
+                    gameCanvas.Children.Remove(heart2);
+                    break;
+                case 0:
+                    gameCanvas.Children.Remove(heart1);
+                    this.Background = Brushes.Red;
+                    break;
+            }
+        }
+        private TextBlock CreateText(string text, int size, double left, double top)
+        {
+            var txt = new TextBlock
+            {
+                Text = text,
+                FontSize = size,
+                FontWeight = FontWeights.Bold,
+                Foreground = Brushes.Black,
+                Background = Brushes.Transparent,
+                TextAlignment = TextAlignment.Center
+            };
+            Canvas.SetLeft(txt, left);
+            Canvas.SetTop(txt, top);
+            return txt;
+        }
+        private void GameOver()
+        {
+            gameOver.Play();
+            gameCanvas.Children.Clear();
+            gameCanvas.Children.Add(CreateText("Game over", 100, 500, 300));
+            gameCanvas.Children.Add(CreateText("press Esc to exit", 20, 10, 20));
+            gameCanvas.Children.Add(CreateText($"score: {score}", 20, 730, 650));
+            gameCanvas.Children.Add(CreateText($"High Score: {highScore}", 20, 700, 680));
+            gameCanvas.Children.Add(CreateText("Press Space to play again", 20, 650, 780));
+
+            if (score > highScore)
+            {
+                highScore = score;
+                SaveHighScore();
+            }
+            count = 1;
+        }
         private void SetupUI()
         {
             this.Content = gameCanvas;
@@ -299,6 +356,67 @@ namespace spaceship_game
             }
 
 
+        }
+        public class SmallAsteroid : Enemy, IMovable
+        {
+            public SmallAsteroid()
+            {
+                Health = 1;
+                Score = 1;
+                Image = new Image { Source = MainWindow.LoadImage("Resources/meteor.png") };
+            }
+
+            public void Move()
+            {
+                Size++;
+                Image.Width = Image.Height = Size;
+            }
+            public override Enemy Clone() => new SmallAsteroid();
+        }
+
+        public class BigAsteroid : Enemy, IMovable
+        {
+            public BigAsteroid()
+            {
+                Health = 2;
+                Score = 2;
+                Image = new Image { Source = MainWindow.LoadImage("Resources/strong.png") };
+            }
+
+            public void Move()
+            {
+                Size++;
+                Image.Width = Image.Height = Size;
+            }
+            public override Enemy Clone() => new BigAsteroid();
+        }
+
+        public class UFO : Enemy, IMovable
+        {
+            private double angle = 0;
+
+            public UFO()
+            {
+                Health = 3;
+                Score = 100;
+                Image = new Image { Source = MainWindow.LoadImage("Resources/UFO.png") };
+            }
+
+            public void Move()
+            {
+                Size++;
+                Image.Width = Image.Height = Size;
+
+                angle += 0.1; // збільшуємо кут
+
+                // Коливальний рух по синусоїді
+                Y += 1.5;
+                X += Math.Sin(angle) * 3;
+
+                Canvas.SetLeft(Image, X);
+                Canvas.SetTop(Image, Y);
+            }
+            public override Enemy Clone() => new UFO();
         }
     }
 }
