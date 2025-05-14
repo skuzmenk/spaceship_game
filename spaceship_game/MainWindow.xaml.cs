@@ -208,6 +208,7 @@ namespace spaceship_game
                 SaveHighScore();
             }
             count = 1;
+            lives = 3;
         }
         private void SetupUI()
         {
@@ -407,9 +408,8 @@ namespace spaceship_game
                 Size++;
                 Image.Width = Image.Height = Size;
 
-                angle += 0.1; // збільшуємо кут
+                angle += 0.1;
 
-                // Коливальний рух по синусоїді
                 Y += 1.5;
                 X += Math.Sin(angle) * 3;
 
