@@ -47,7 +47,25 @@ namespace spaceship_game
             this.Topmost = true;  
             gameCanvas = new Canvas();
             this.Content = gameCanvas;
-            ShowStartScreen();     
+            ShowStartScreen();
+            LoadHighScore();
+        }
+        private void LoadHighScore()
+        {
+            if (File.Exists(highScorePath))
+            {
+                string json = File.ReadAllText(highScorePath);
+                var record = JsonSerializer.Deserialize<HighScore>(json);
+                if (record != null) highScore = record.Score;
+            }
+        }
+        public class HighScore { public int Score { get; set; } }
+
+        private void SaveHighScore()
+        {
+            var record = new HighScore { Score = highScore };
+            string json = JsonSerializer.Serialize(record);
+            File.WriteAllText(highScorePath, json);
         }
         private async void Window_KeyDown(object sender, KeyEventArgs e)
         {
@@ -61,7 +79,7 @@ namespace spaceship_game
                 gameCanvas.Children.Clear();
                 this.Background = Brushes.Black;
                 InitializeStars();
-                
+                //////////////////////////////////////////
             }
         }
         private void InitializeStars()
