@@ -76,6 +76,7 @@ namespace spaceship_game
 
             if (e.Key == Key.Space && count == 1)
             {
+                isGameOver = false;
                 gameCanvas.Children.Clear();
                 this.Background = Brushes.Black;
                 InitializeStars();
@@ -296,18 +297,48 @@ namespace spaceship_game
                 background.Height = this.Height;
             };
             gameCanvas.Children.Add(background);
-
-            Label startLabel = new()
+            Button exitButton = new()
             {
-                Content = "Press Space to start",
+                Content = "Exit",
+                Width = 150,
+                Height = 50,
+                FontSize = 18,
+                Background = Brushes.Black,
                 Foreground = Brushes.Yellow,
-                FontSize = 20,
                 FontWeight = FontWeights.Bold
             };
-            Canvas.SetLeft(startLabel, 650);
-            Canvas.SetTop(startLabel, 750);
-            gameCanvas.Children.Add(startLabel);
-
+            Canvas.SetLeft(exitButton, 680);
+            Canvas.SetTop(exitButton, 700);
+            exitButton.Click += async (s, e) =>
+            {
+                Application.Current.Shutdown();
+            };
+            gameCanvas.Children.Add(exitButton);
+          
+            Button startButton = new()
+            {
+                Content = "Start",
+                Width = 150,
+                Height = 50,
+                FontSize = 18,
+                Background = Brushes.Black,
+                Foreground = Brushes.Yellow,
+                FontWeight = FontWeights.Bold
+            };
+            Canvas.SetLeft(startButton, 680);
+            Canvas.SetTop(startButton, 650);
+            startButton.Click += async (s, e) =>
+            {
+                isGameOver = false;
+                gameCanvas.Children.Clear();
+                this.Background = Brushes.Black;
+                InitializeStars();
+                count = 0;
+                score = 0;
+                SetupUI();
+                await PlayGameRounds();
+            };
+            gameCanvas.Children.Add(startButton);
         }
         private static SoundPlayer LoadSound(string path)
         {
