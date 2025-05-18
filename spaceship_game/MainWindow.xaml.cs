@@ -77,6 +77,7 @@ namespace spaceship_game
             if (e.Key == Key.Space && count == 1)
             {
                 isGameOver = false;
+                speed = 60;
                 gameCanvas.Children.Clear();
                 this.Background = Brushes.Black;
                 InitializeStars();
@@ -88,31 +89,37 @@ namespace spaceship_game
         }
         private async Task PlayGameRounds()
         {
-            while (true)
+            Random random = new Random();
+
+            while (!isGameOver)
             {
-                await PlayRound(new SmallAsteroid(), 10);
+                int randomEnemy = random.Next(0, 3);
+                switch (randomEnemy)
+                {
+                    case 0:
+                        await PlayRound(new SmallAsteroid(), 1);
+                        break;
+
+                    case 1:
+                        await PlayRound(new BigAsteroid(), 1);
+                        break;
+
+                    case 2:
+                        bossRound.Play();
+                        await PlayRound(new UFO(), 1);
+                        break;
+                }
+                speed--;
                 if (isGameOver)
                 {
                     break;
                 }
-                await PlayRound(new BigAsteroid(), 10);
-                if (isGameOver)
-                {
-                    break;
-                }
-                bossRound.Play();
-                await PlayRound(new UFO(), 1);
-                if (isGameOver)
-                {
-                    break;
-                }
-                speed += 30;
             }
         }
+
         public void OnEnemyHit()
         {
             shoot.Play();
-            speed--;
         }
         private async Task PlayRound(Enemy enemyType, int count)
         {
